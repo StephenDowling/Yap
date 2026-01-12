@@ -4,9 +4,10 @@ const express = require('express');
 const expressLayout = require('express-ejs-layouts');
 
 const app = express();
-const PORT = 8080 || process.env.PORT;
+const PORT = process.env.PORT || 8080;
+const path = require('path');
 
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 //templating engine 
 app.use(expressLayout);
