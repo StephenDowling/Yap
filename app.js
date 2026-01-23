@@ -9,7 +9,12 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 const path = require('path');
 
+//connecting to DB
 connectDB();
+
+//middleware for parsing data through forms e.g searching 
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.use(express.static(path.join(__dirname, 'public')));
 

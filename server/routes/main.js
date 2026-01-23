@@ -2,7 +2,10 @@ const express = require('express');
 const router = express.Router();
 const Post = require('../models/Post');
 
-//GET 
+/**
+ * GET ROUTES
+ */
+//GET Home Page
 router.get('', async (req, res) => {
     try{
         const locals = {
@@ -35,11 +38,70 @@ router.get('', async (req, res) => {
     
 });
 
+//GET Post :id
+
+router.get('/post/:id', async(req, res) => {
+    try {
+        
+
+        let slug = req.params.id;
+
+        const data = await Post.findById({ _id: slug});
+
+        const locals = {
+            title: data.title,
+            description: "Simple blog created with NodeJS & Express"
+        }
+
+        res.render('post', {locals, data});
+
+    } catch (error) {
+        console.log(error);
+    }
+    
+    
+
+
+})
+
+//GET About Page
 router.get('/about', (req, res) => {
     res.render('about');
 });
 
-//POST
+/**
+ * POST ROUTES
+ */
+
+//POST searchTerm
+router.post('/search', async(req, res) => {
+    try {
+        const locals = {
+            title: "Search",
+            description: "searching searching searching for love"
+        }
+
+        let searchTerm = req.body.searchTerm;
+        const searchNoSpecialChar = searchTerm.replace(/[^a-zA-Z0-9]/g, "");
+
+        const data = await Post.find({
+            $or: [
+                //regexs for removing special characters 
+                {title: { $regex: new RegExp(searchNoSpecialChar, 'i')}},
+                {body: { $regex: new RegExp(searchNoSpecialChar, 'i')}}
+            ]
+        });
+        res.render("search", {
+            data,
+            locals
+        });
+    } catch (error) {
+        console.log(error);
+    }
+
+})
+
+//POST Insert Data
 // function insertPostData() {
 //     Post.insertMany([
 //         {
