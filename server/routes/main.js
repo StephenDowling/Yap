@@ -126,3 +126,17 @@ router.post('/search', async(req, res) => {
 // insertPostData();
 
 module.exports = router;
+
+// router.get('', async(req, res) => {
+//     const locals = {
+//         title: "NodeJS Blog",
+//         description: "this is the description"
+//     }
+
+//     try {
+//         const data = await Post.find();
+//         res.render('index', {locals, data});
+//     } catch (error) {
+//         console.log(error);
+//     }
+// });
