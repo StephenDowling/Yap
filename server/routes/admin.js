@@ -89,6 +89,32 @@ router.get('/add-post', authMiddleware, async(req, res) => {
     }
 });
 
+//GET Admin edit post page
+router.get('/edit-post/:id', authMiddleware, async(req, res) => {
+    try {
+        const locals = {
+            title: "Edit Post",
+            description: "this is the description"
+        }
+        const data = await Post.findOne({_id: req.params.id});
+        res.render('admin/edit-post', {
+            locals,
+            data,
+            layout: adminLayout
+        });
+        
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+//GET Admin log out
+router.get('/logout', (req, res) => {
+    res.clearCookie('token');
+    req.flash('success', 'Log out successful!');
+    res.redirect('/');
+});
+
 /**
  * POST ROUTES
  */
@@ -159,6 +185,45 @@ router.post('/add-post', authMiddleware, async(req, res) => {
     }
 });
 
+
+/**
+ * PUT ROUTES
+ */
+
+//PUT Admin edit post page
+router.put('/edit-post/:id', authMiddleware, async(req, res) => {
+    
+
+    try {
+        await Post.findByIdAndUpdate(req.params.id, {
+            title: req.body.title,
+            body: req.body.body,
+            updatedAt: Date.now()
+        });
+
+        res.redirect(`/edit-post/${req.params.id}`);
+        
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+/**
+ * DELETE ROUTES
+ */
+
+//DELETE Admin delete post
+router.delete('/delete-post/:id', authMiddleware, async(req, res) => {
+    try{
+        await Post.deleteOne({
+            _id: req.params.id
+        });
+        res.redirect('/dashboard');
+    }catch(error){
+        console.log(error);
+    }
+
+});
 module.exports = router;
 
 //GET TEMPLATE

@@ -22,6 +22,12 @@
     <% if (nextPage !== null) { %>
         <a href="/?page=<%= nextPage %>" class="pagination">&lt;View Older Posts</a>
     <% } %>
+
+    <% if (success.length) { %>
+        <script>
+            alert("<%= success[0] %>");
+        </script>
+    <% } %>
     
 
 </section>

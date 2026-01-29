@@ -2,11 +2,14 @@ require('dotenv').config();
 
 const express = require('express');
 const expressLayout = require('express-ejs-layouts');
+const methodOverride = require('method-override');
+const flash = require('connect-flash');
 const session = require('express-session');
 const cookieParser = require('cookie-parser'); //helps grab cookies and save cookies, used for storing session info when logging in 
 const MongoStore = require('connect-mongo').default;
 
 const { connectDB, mongoose } = require('./server/config/db');
+const {isActiveRoute} = require('./server/helpers/routeHelpers');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -18,8 +21,9 @@ connectDB();
 //middleware for parsing data through forms e.g searching 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
+app.use(methodOverride('_method'));
 app.use(cookieParser());
+app.use(flash());
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -31,12 +35,23 @@ app.use(session({
     cookie: {maxAge: 3600000}
 }));
 
+app.use((req, res, next) => {
+  res.locals.success = req.flash('success');
+  next();
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 //templating engine 
 app.use(expressLayout);
 app.set('layout', './layouts/main');
 app.set('view engine', 'ejs');
+
+app.use((req, res, next) => {
+  res.locals.isActiveRoute = isActiveRoute;
+  res.locals.currentRoute = req.path;
+  next();
+});
 
 app.use('/', require('./server/routes/main'));
 //for admin pages 
